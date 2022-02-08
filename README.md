@@ -20,6 +20,12 @@ RESTification success can be measured by comparing the actual API behaviour to t
    * IntelliJ test menu:  
 ![rate](markdown/rate.png)
 
+## API definition
+
+![ResTL](xox-units/xox-rif.png)
+
+ > Manually test with [provided ARC file](xox-study.arc).
+
 ## MISC
 
  * There is one dedicated (```@Test``` annotated) unit test per REST endpoint (resource + CRUD operation)

@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class RestTestUtils {
 
-    private final String SERVICE_LOCATION = "http://127.0.0.1:8080/bookstore";
+    private final String SERVICE_LOCATION = "http://127.0.0.1:8080/xox";
 
     /**
      * Helper method to construct service URI out of provided relative resource location.
@@ -36,26 +36,5 @@ public class RestTestUtils {
      */
     protected String getRandomIsbn() {
         return Integer.toString(Math.abs(new Random().nextInt()));
-    }
-
-    /**
-     * Helper method to add a test book with provided isbn
-     *
-     * @return HttpResponse representing the server reply.
-     */
-    protected HttpResponse<String> addTestBook(String isbn) throws UnirestException {
-
-        // JSON body for the book to add.
-        String body = "{\n" +
-                "  \"isbn\": " + isbn + ",\n" +
-                "  \"title\": \"The Uninhabitable Earth\",\n" +
-                "  \"author\": \"David Wallace-Wells\",\n" +
-                "  \"priceInCents\": 2447,\n" +
-                "  \"bookAbstract\": \"It is worse, much worse, than you think. The slowness of climate change is a fairy tale, perhaps as pernicious as the one that says it isn’t happening at all, and comes to us bundled with several others in an anthology of comforting delusions: that global warming is an Arctic saga, unfolding remotely; that it is strictly a matter of sea level and coastlines, not an enveloping crisis sparing no place and leaving no life un-deformed.\"\n" +
-                "}";
-
-        // Try to add book to backend
-        return Unirest.put(getServiceURL("/isbns/" + isbn)).header("Content-Type", "application/json; charset=utf-8")
-                .body(body).asString();
     }
 }
