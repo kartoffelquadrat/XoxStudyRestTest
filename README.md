@@ -29,7 +29,8 @@ RESTification success can be measured by comparing the actual API behaviour to t
    * Do not operate on default sample game but on random new game-id to avoid collisions / blemished state on test re-run.
    * Are followed by a subsequent *Get* request to verify the state change was correctly applied.
  * Queries containing a body payload (*Put* / *Post*) specify the body encoding with a header field: ```Content-Type: application/json```.
-
+ * An initial test version, written in BASH [is archived here](xox-units).
+ 
 ## Contact / Pull Requests
 
  * Author: Maximilian Schiedermeier ![email](markdown/email.png)
