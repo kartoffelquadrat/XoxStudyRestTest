@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class RestTestUtils {
 
-    private final String SERVICE_LOCATION = "http://127.0.0.1:8080/";
+    private final String SERVICE_LOCATION = "http://127.0.0.1:8080/xox";
 
     /**
      * Helper method to construct service URI out of provided relative resource location.
@@ -26,15 +26,7 @@ public class RestTestUtils {
      */
     protected void verifyOk(HttpResponse<String> response) {
 
-        assert response.getStatus()/100 == 2;
-    }
-
-    /**
-     * Helper method to create a random ISBN.
-     *
-     * @return new random isbn number (Stringified positive number)
-     */
-    protected String getRandomIsbn() {
-        return Integer.toString(Math.abs(new Random().nextInt()));
+        int status = response.getStatus();
+        assert status/100 == 2;
     }
 }

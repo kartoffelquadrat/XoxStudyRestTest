@@ -1,9 +1,12 @@
 package eu.kartoffelquadrat.xoxresttest;
 
+import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.junit.Test;
+
+import java.util.LinkedList;
 
 /**
  * All Unit tests for Xox Resources
@@ -12,20 +15,79 @@ public class XoxTest
         extends RestTestUtils {
 
     /**
-     * Try to retrieve list of all games.
+     * Try to retrieve list of all games. Verify the default sample game is present.
      */
     @Test
     public void testXoxGet() throws UnirestException {
-        HttpResponse<String> allGames = Unirest.get(getServiceURL("/xox")).asString();
-        verifyOk(allGames);
-//
-//        // Verify and return catalogue content
-//        String body = catalogue.getBody();
-//        assert body.contains("9780739360385");
-//        assert body.contains("9780553382563");
-//        assert body.contains("9781977791122");
-//        assert body.contains("9780262538473");
 
+        long sampleGameId = 42;
+        assert getAllRegisteredGameIds().contains(sampleGameId);
+    }
+
+    /**
+     * Try to add new game
+     */
+    @Test
+    public void testXoxPost() throws UnirestException {
+
+        // Add new game
+        long id = addSampleGameAndGetId();
+
+        // Verify the game exists
+        assert getAllRegisteredGameIds().contains(id);
+
+    }
+
+    /**
+     * Helper method to look up list of all registered game IDs as collection.
+     * @return
+     */
+    private LinkedList<Long> getAllRegisteredGameIds() throws UnirestException {
+
+        HttpResponse<String> allGamesResponse = Unirest.get(getServiceURL("")).asString();
+        verifyOk(allGamesResponse);
+
+        // Verify default sample game is present
+        String allGamesString = allGamesResponse.getBody();
+        LinkedList<Long> allGameIds = new Gson().fromJson(allGamesString, new LinkedList<Long>().getClass());
+        return allGameIds;
+    }
+
+    /**
+     * Helper method to add a new sample game to the backend.
+     *
+     * @return HttpResponse<String> that encodes server reply.
+     */
+    private HttpResponse<String> addSampleGame() throws UnirestException {
+        // Try to add new Game
+        LinkedList<Player> players = new LinkedList<>();
+        players.add(new Player("Max", "#CAFFEE"));
+        players.add(new Player("Moritz", "#1CE7EA"));
+        XoxInitSettings testSettings = new XoxInitSettings(players, "Max");
+
+        // String JSON-encoded testSettings:
+        String jsonTestSettings = new Gson().toJson(testSettings);
+        return Unirest.post(getServiceURL(getServiceURL(""))).header("Content-Type", "application/json").body(jsonTestSettings).asString();
+    }
+
+    /**
+     * Helper method to add a sample game and obtain the ID of the game that has just been added
+     *
+     * @return Long value representing the game id of the entity that has been added.
+     */
+    private Long addSampleGameAndGetId() throws UnirestException {
+        // Get amount of games before game creation
+        LinkedList<Long> preGameIds = getAllRegisteredGameIds();
+
+        addSampleGame();
+
+        // Get amount of games after game creation
+        LinkedList<Long> postGameIds = getAllRegisteredGameIds();
+
+
+        // Figure out which game ID was added
+        postGameIds.removeAll(preGameIds);
+        return postGameIds.removeFirst();
     }
 
 //    /**
@@ -77,4 +139,5 @@ public class XoxTest
 //        String catalogue = Unirest.get(getServiceURL("/isbns")).asString().getBody();
 //        assert catalogue.contains(randomIsbn);
 //    }
+
 }
