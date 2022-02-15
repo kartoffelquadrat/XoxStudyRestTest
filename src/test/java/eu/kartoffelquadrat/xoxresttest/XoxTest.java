@@ -1,11 +1,13 @@
 package eu.kartoffelquadrat.xoxresttest;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.junit.Test;
 
+import java.lang.reflect.Type;
 import java.util.LinkedList;
 
 /**
@@ -31,7 +33,7 @@ public class XoxTest
     public void testXoxPost() throws UnirestException {
 
         // Add new game
-        long id = addSampleGameAndGetId();
+        long id = addSampleGame();
 
         // Verify the game exists
         assert getAllRegisteredGameIds().contains(id);
@@ -49,7 +51,8 @@ public class XoxTest
 
         // Verify default sample game is present
         String allGamesString = allGamesResponse.getBody();
-        LinkedList<Long> allGameIds = new Gson().fromJson(allGamesString, new LinkedList<Long>().getClass());
+        Type listType = new TypeToken<LinkedList<Long>>(){}.getType();
+        LinkedList<Long> allGameIds = new Gson().fromJson(allGamesString, listType);
         return allGameIds;
     }
 
@@ -58,7 +61,7 @@ public class XoxTest
      *
      * @return HttpResponse<String> that encodes server reply.
      */
-    private HttpResponse<String> addSampleGame() throws UnirestException {
+    private long addSampleGame() throws UnirestException {
         // Try to add new Game
         LinkedList<Player> players = new LinkedList<>();
         players.add(new Player("Max", "#CAFFEE"));
@@ -67,28 +70,11 @@ public class XoxTest
 
         // String JSON-encoded testSettings:
         String jsonTestSettings = new Gson().toJson(testSettings);
-        return Unirest.post(getServiceURL(getServiceURL(""))).header("Content-Type", "application/json").body(jsonTestSettings).asString();
+        HttpResponse<String> addGameResponse = Unirest.post(getServiceURL("")).header("Content-Type", "application/json").body(jsonTestSettings).asString();
+        verifyOk(addGameResponse);
+        return Long.parseLong(addGameResponse.getBody());
     }
 
-    /**
-     * Helper method to add a sample game and obtain the ID of the game that has just been added
-     *
-     * @return Long value representing the game id of the entity that has been added.
-     */
-    private Long addSampleGameAndGetId() throws UnirestException {
-        // Get amount of games before game creation
-        LinkedList<Long> preGameIds = getAllRegisteredGameIds();
-
-        addSampleGame();
-
-        // Get amount of games after game creation
-        LinkedList<Long> postGameIds = getAllRegisteredGameIds();
-
-
-        // Figure out which game ID was added
-        postGameIds.removeAll(preGameIds);
-        return postGameIds.removeFirst();
-    }
 
 //    /**
 //     * Verify that GET on /isbns returns 200 and expected catalogue. Every resource is covered by exactly one test.
