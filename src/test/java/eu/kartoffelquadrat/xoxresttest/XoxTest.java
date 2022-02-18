@@ -58,13 +58,12 @@ public class XoxTest
         verifyOk(rankingReply);
 
         // Ranking can not be deserialized conveniently, due to final / real-only fields in ranking
-        System.out.println(rankingReply);
-        new Gson().fromJson(rankingReply.getBody(), Ranking.class);
+        Ranking ranking = new Gson().fromJson(rankingReply.getBody(), Ranking.class);
 
         // Verify ranking properties
-//        Assert.assertFalse("Access to test game marked game over while the sample game should be still running.", ranking.isGameOver());
-//        Assert.assertFalse("Max should have a score of 0 in the sample game, but the value listed by ranking object is not 0.", ranking.getScoreForPlayer("Max")==0);
-//        Assert.assertFalse("Moritz should have a score of 0 in the sample game, but the value listed by ranking object is not 0.", ranking.getScoreForPlayer("Moritz")==0);
+        Assert.assertFalse("Access to test game marked game over while the sample game should be still running.", ranking.isGameOver());
+        Assert.assertTrue("Max should have a score of 0 in the sample game, but the value listed by ranking object is not 0.", ranking.getScoreForPlayer("Max")==0);
+        Assert.assertTrue("Moritz should have a score of 0 in the sample game, but the value listed by ranking object is not 0.", ranking.getScoreForPlayer("Moritz")==0);
     }
 
     /**
