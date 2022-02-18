@@ -5,6 +5,10 @@ import com.google.gson.reflect.TypeToken;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import eu.kartoffelquadrat.xoxinternals.controller.Ranking;
+import eu.kartoffelquadrat.xoxinternals.model.ModelAccessException;
+import eu.kartoffelquadrat.xoxinternals.model.Player;
+import eu.kartoffelquadrat.xoxinternals.model.XoxInitSettings;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -40,8 +44,35 @@ public class XoxTest
         assert getAllRegisteredGameIds().contains(id);
     }
 
+    /**
+     * Test access to ranking information of a test game
+     */
     @Test
-    public void testXoxDelete() throws UnirestException {
+    public void testXoxIdGet() throws UnirestException, ModelAccessException {
+
+        // Add new game
+        long id = addSampleGame();
+
+        // Get Ranking info and analyze
+        HttpResponse<String> rankingReply = Unirest.get(getServiceURL(Long.toString(id))).asString();
+        verifyOk(rankingReply);
+
+        // Ranking can not be deserialized conveniently, due to final / real-only fields in ranking
+        System.out.println(rankingReply);
+        new Gson().fromJson(rankingReply.getBody(), Ranking.class);
+
+        // Verify ranking properties
+//        Assert.assertFalse("Access to test game marked game over while the sample game should be still running.", ranking.isGameOver());
+//        Assert.assertFalse("Max should have a score of 0 in the sample game, but the value listed by ranking object is not 0.", ranking.getScoreForPlayer("Max")==0);
+//        Assert.assertFalse("Moritz should have a score of 0 in the sample game, but the value listed by ranking object is not 0.", ranking.getScoreForPlayer("Moritz")==0);
+    }
+
+    /**
+     * Try to delete a sample game (game is added first, uniquely for this purpose)
+     * @throws UnirestException
+     */
+    @Test
+    public void testXoxIdDelete() throws UnirestException {
 
         // Add new game
         long id = addSampleGame();
@@ -56,6 +87,7 @@ public class XoxTest
         // Verify game is no longer there
         Assert.assertFalse("Deleted test game, but the list of existing game still contains its ID.", getAllRegisteredGameIds().contains(id));
     }
+
 
     /**
      * Helper method to look up list of all registered game IDs as collection.
