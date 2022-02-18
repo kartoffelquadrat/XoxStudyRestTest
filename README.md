@@ -20,6 +20,8 @@ RESTification success can be measured by comparing the actual API behaviour to t
    * IntelliJ test menu:  
 ![rate](markdown/rate.png)
 
+ > Note: This project requires access to beans of [```XoxInternals```](https://github.com/kartoffelquadrat/XoxInternals) as a maven dependency. Satisfy them by a preliminary build of [```XoxInternals```](https://github.com/kartoffelquadrat/XoxInternals), with ```mvn clean install```, to inject the XoxInternals dependency into your local maven repository.
+
 ## API definition
 
 ![ResTL](xox-units/xox-rif.png)
