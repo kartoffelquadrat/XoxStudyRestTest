@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.reflect.Type;
@@ -37,11 +38,28 @@ public class XoxTest
 
         // Verify the game exists
         assert getAllRegisteredGameIds().contains(id);
+    }
 
+    @Test
+    public void testXoxDelete() throws UnirestException {
+
+        // Add new game
+        long id = addSampleGame();
+
+        // Verify game is exists
+        assert getAllRegisteredGameIds().contains(id);
+
+        // Delete game again
+        HttpResponse<String> deleteGameReply = Unirest.delete(getServiceURL(Long.toString(id))).asString();
+        verifyOk(deleteGameReply);
+
+        // Verify game is no longer there
+        Assert.assertFalse("Deleted test game, but the list of existing game still contains its ID.", getAllRegisteredGameIds().contains(id));
     }
 
     /**
      * Helper method to look up list of all registered game IDs as collection.
+     *
      * @return
      */
     private LinkedList<Long> getAllRegisteredGameIds() throws UnirestException {
@@ -51,7 +69,8 @@ public class XoxTest
 
         // Verify default sample game is present
         String allGamesString = allGamesResponse.getBody();
-        Type listType = new TypeToken<LinkedList<Long>>(){}.getType();
+        Type listType = new TypeToken<LinkedList<Long>>() {
+        }.getType();
         LinkedList<Long> allGameIds = new Gson().fromJson(allGamesString, listType);
         return allGameIds;
     }

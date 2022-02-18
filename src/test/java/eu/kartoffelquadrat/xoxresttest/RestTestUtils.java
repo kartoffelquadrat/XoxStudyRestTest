@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class RestTestUtils {
 
-    private final String SERVICE_LOCATION = "http://127.0.0.1:8080/xox";
+    private final String SERVICE_LOCATION = "http://127.0.0.1:8080/xox/";
 
     /**
      * Helper method to construct service URI out of provided relative resource location.
