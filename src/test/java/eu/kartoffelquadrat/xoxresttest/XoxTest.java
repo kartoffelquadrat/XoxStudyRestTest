@@ -63,12 +63,13 @@ public class XoxTest
 
         // Verify ranking properties
         Assert.assertFalse("Access to test game marked game over while the sample game should be still running.", ranking.isGameOver());
-        Assert.assertTrue("Max should have a score of 0 in the sample game, but the value listed by ranking object is not 0.", ranking.getScoreForPlayer("Max")==0);
-        Assert.assertTrue("Moritz should have a score of 0 in the sample game, but the value listed by ranking object is not 0.", ranking.getScoreForPlayer("Moritz")==0);
+        Assert.assertTrue("Max should have a score of 0 in the sample game, but the value listed by ranking object is not 0.", ranking.getScoreForPlayer("Max") == 0);
+        Assert.assertTrue("Moritz should have a score of 0 in the sample game, but the value listed by ranking object is not 0.", ranking.getScoreForPlayer("Moritz") == 0);
     }
 
     /**
      * Try to delete a sample game (game is added first, uniquely for this purpose)
+     *
      * @throws UnirestException
      */
     @Test
@@ -88,6 +89,11 @@ public class XoxTest
         Assert.assertFalse("Deleted test game, but the list of existing game still contains its ID.", getAllRegisteredGameIds().contains(id));
     }
 
+    /**
+     * Test to verify if endpoint for board retrieval works as expected.
+     *
+     * @throws UnirestException
+     */
     @Test
     public void testXoxIdBoardGet() throws UnirestException {
 
@@ -99,14 +105,36 @@ public class XoxTest
         assert getAllRegisteredGameIds().contains(id);
 
         // Verify board layout (empty)
-        HttpResponse<String> getBoardResponse = Unirest.get(getServiceURL(Long.toString(id)+"/board")).asString();
+        HttpResponse<String> getBoardResponse = Unirest.get(getServiceURL(Long.toString(id) + "/board")).asString();
         Board board = new Gson().fromJson(getBoardResponse.getBody(), Board.class);
 
+        // Verify board status (must be empty board)
         Assert.assertTrue("Sample board should be empty, but corresponding flag is false.", board.isEmpty());
-//        Assert.assertTrue("Sample board does not correspond to expected content.", board.getCells());
-        System.out.println(board);
+        for (int x = 0; x < 3; x++) {
+            for (int y = 0; y < 3; y++) {
+                Assert.assertTrue(board.isFree(x, y));
+            }
+        }
+        Assert.assertFalse("Board should not have three in a line, but the corresponding field is set to true", board.isThreeInALine());
     }
 
+    @Test
+    public void testXoxIdPlayersGet() throws UnirestException {
+
+
+    }
+
+    @Test
+    public void testXoxIdPlayersIdActionsGet() throws UnirestException {
+
+
+    }
+
+    @Test
+    public void testXoxIdPlayersIdActionsPost() throws UnirestException {
+
+
+    }
 
     /**
      * Helper method to look up list of all registered game IDs as collection.
