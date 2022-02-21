@@ -6,6 +6,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import eu.kartoffelquadrat.xoxinternals.controller.Ranking;
+import eu.kartoffelquadrat.xoxinternals.model.Board;
 import eu.kartoffelquadrat.xoxinternals.model.ModelAccessException;
 import eu.kartoffelquadrat.xoxinternals.model.Player;
 import eu.kartoffelquadrat.xoxinternals.model.XoxInitSettings;
@@ -76,7 +77,7 @@ public class XoxTest
         // Add new game
         long id = addSampleGame();
 
-        // Verify game is exists
+        // Verify game id exists
         assert getAllRegisteredGameIds().contains(id);
 
         // Delete game again
@@ -85,6 +86,25 @@ public class XoxTest
 
         // Verify game is no longer there
         Assert.assertFalse("Deleted test game, but the list of existing game still contains its ID.", getAllRegisteredGameIds().contains(id));
+    }
+
+    @Test
+    public void testXoxIdBoardGet() throws UnirestException {
+
+
+        // Add new game
+        long id = addSampleGame();
+
+        // Verify game id exists
+        assert getAllRegisteredGameIds().contains(id);
+
+        // Verify board layout (empty)
+        HttpResponse<String> getBoardResponse = Unirest.get(getServiceURL(Long.toString(id)+"/board")).asString();
+        Board board = new Gson().fromJson(getBoardResponse.getBody(), Board.class);
+
+        Assert.assertTrue("Sample board should be empty, but corresponding flag is false.", board.isEmpty());
+//        Assert.assertTrue("Sample board does not correspond to expected content.", board.getCells());
+        System.out.println(board);
     }
 
 
