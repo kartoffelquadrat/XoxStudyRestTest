@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import eu.kartoffelquadrat.xoxinternals.controller.Action;
 import eu.kartoffelquadrat.xoxinternals.controller.Ranking;
 import eu.kartoffelquadrat.xoxinternals.model.Board;
 import eu.kartoffelquadrat.xoxinternals.model.ModelAccessException;
@@ -14,6 +15,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.reflect.Type;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 /**
@@ -146,7 +148,18 @@ public class XoxTest
     @Test
     public void testXoxIdPlayersIdActionsGet() throws UnirestException {
 
+        // Add new game
+        long id = addSampleGame();
 
+        // Verify game id exists
+        assert getAllRegisteredGameIds().contains(id);
+
+        // Access players resource, parse response to hash indexed map
+        HttpResponse<String> getActionsResponse = Unirest.get(getServiceURL(Long.toString(id) + "/players/Max/actions")).asString();
+        LinkedHashMap<String, Action> actions = new Gson().fromJson(getActionsResponse.getBody(), new LinkedHashMap<String, Action>().getClass());
+
+        // All 9 fields must be accessible, there should be 9 entries in hashmap
+        Assert.assertTrue("Retrieved actions bundle does not contain 9 entries, while the xox board is empty", actions.size()==9);
     }
 
     @Test
