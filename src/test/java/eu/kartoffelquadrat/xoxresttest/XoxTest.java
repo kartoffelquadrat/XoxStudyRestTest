@@ -118,10 +118,29 @@ public class XoxTest
         Assert.assertFalse("Board should not have three in a line, but the corresponding field is set to true", board.isThreeInALine());
     }
 
+    /**
+     * Try to retrieve player info for sample xox game instance.
+     *
+     * @throws UnirestException
+     */
     @Test
     public void testXoxIdPlayersGet() throws UnirestException {
 
+        // Add new game
+        long id = addSampleGame();
 
+        // Verify game id exists
+        assert getAllRegisteredGameIds().contains(id);
+
+        // Access players resource
+        HttpResponse<String> getPlayersResponse = Unirest.get(getServiceURL(Long.toString(id) + "/players")).asString();
+        Player[] players = new Gson().fromJson(getPlayersResponse.getBody(), Player[].class);
+
+        Assert.assertTrue("Not exactly two players in sample game.", players.length == 2);
+        Assert.assertTrue("First player not Max", players[0].getName().equals("Max"));
+        Assert.assertTrue("First player colour not #CAFFEE", players[0].getPreferredColour().equals("#CAFFEE"));
+        Assert.assertTrue("Second player not Moritz", players[1].getName().equals("Moritz"));
+        Assert.assertTrue("Second player colour not #1CE7EA", players[1].getPreferredColour().equals("#1CE7EA"));
     }
 
     @Test
