@@ -181,36 +181,35 @@ public class XoxTest
      *
      * @throws UnirestException
      */
-//    @Test
-//    public void testXoxIdPlayersIdActionsPost() throws UnirestException {
+    @Test
+    public void testXoxIdPlayersIdActionsPost() throws UnirestException {
 
-//        // Add new game
-//        long id = addSampleGame();
-//
-//        // Verify game id exists
-//        assert getAllRegisteredGameIds().contains(id);
-//
-//        // Access players resource, parse response to hash indexed map
-//        HttpResponse<String> postActionResponse = Unirest.post(getServiceURL(Long.toString(id) + "/players/Max/actions")).body("0").asString();
-//        verifyOk(postActionResponse);
+        // Add new game
+        long id = addSampleGame();
 
-//        // Access players resource, parse response to hash indexed map
-//        HttpResponse<String> getActionsResponsePlayer2 = Unirest.get(getServiceURL(Long.toString(id) + "/players/Moritz/actions")).asString();
-//        verifyOk(getActionsResponsePlayer2);
-//        LinkedHashMap<String, Action> actionsPlayer2 = new Gson().fromJson(getActionsResponsePlayer2.getBody(), new LinkedHashMap<String, Action>().getClass());
-//
-//        // Remaining 8 fields must be accessible, there should be 9 entries in hashmap
-//        Assert.assertTrue("Retrieved actions bundle does not contain 9 entries, while the xox board is empty", actionsPlayer2.size()==8);
-//
-//        // Do the same for player 1 (not their turn) resource, parse response to hash indexed map
-//        HttpResponse<String> getActionsResponsePlayer1 = Unirest.get(getServiceURL(Long.toString(id) + "/players/Max/actions")).asString();
-//        verifyOk(getActionsResponsePlayer1);
-//        LinkedHashMap<String, Action> actionsPlayer1 = new Gson().fromJson(getActionsResponsePlayer1.getBody(), new LinkedHashMap<String, Action>().getClass());
-//
-//        // action map for player 2 must be empty (not their turn)
-//        Assert.assertTrue("Retrieved actions bundle does not contain 0 entries, while it is not player 1s turn.", actionsPlayer1.size()==0);
+        // Verify game id exists
+        assert getAllRegisteredGameIds().contains(id);
 
-//    }
+        // Access players resource, parse response to hash indexed map
+        HttpResponse<String> postActionResponse = Unirest.post(getServiceURL(Long.toString(id) + "/players/Max/actions/0")).asString();
+        verifyOk(postActionResponse);
+
+        // Access players resource, parse response to hash indexed map
+        HttpResponse<String> getActionsResponsePlayer2 = Unirest.get(getServiceURL(Long.toString(id) + "/players/Moritz/actions")).asString();
+        verifyOk(getActionsResponsePlayer2);
+        XoxClaimFieldAction[] actionsPlayer2 = new Gson().fromJson(getActionsResponsePlayer2.getBody(), new XoxClaimFieldAction[]{}.getClass());
+
+        // Remaining 8 fields must be accessible, there should be 9 entries in hashmap
+        Assert.assertTrue("Retrieved actions bundle does not contain 9 entries, while the xox board is empty", actionsPlayer2.length==8);
+
+        // Do the same for player 1 (not their turn) resource, parse response to hash indexed map
+        HttpResponse<String> getActionsResponsePlayer1 = Unirest.get(getServiceURL(Long.toString(id) + "/players/Max/actions")).asString();
+        verifyOk(getActionsResponsePlayer1);
+        XoxClaimFieldAction[] actionsPlayer1 = new Gson().fromJson(getActionsResponsePlayer1.getBody(), new XoxClaimFieldAction[]{}.getClass());
+
+        // action map for player 2 must be empty (not their turn)
+        Assert.assertTrue("Retrieved actions bundle does not contain 0 entries, while it is not player 1s turn.", actionsPlayer1.length==0);
+    }
 
     /**
      * Helper method to look up list of all registered game IDs as collection.
