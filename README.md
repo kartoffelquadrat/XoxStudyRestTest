@@ -46,7 +46,7 @@ specification.
 ## Testing
 
 It is possible to test the correctness of the unit tests,
-using [a reference implementation Xox backend](XoxStudyManuallyRestified).
+using [a reference implementation Xox backend](https://github.com/m5c/XoxStudyManuallyRestified).
 
 * Clone the reference implementation.
 * Run the ```test.sh``` script.
