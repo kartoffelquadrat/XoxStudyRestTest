@@ -4,7 +4,7 @@ Unit REST tests for the Xox REST API backend.
 
 ## About
 
-[Xox](https://github.com/kartoffelquadrat/XoxInternals) is a test project for service
+[Xox](https://github.com/m5c/XoxInternals) is a test project for service
 RESTification.  
 RESTification success can be measured by comparing the actual API behaviour to the interface
 specification.
@@ -24,9 +24,9 @@ specification.
     * Automated, using the ```RestifyAnalyzier``` script: Batched testing of multiple submissions.
 
 > Note: This project requires access to beans
-> of [```XoxInternals```](https://github.com/kartoffelquadrat/XoxInternals) as a maven dependency.
+> of [```XoxInternals```](https://github.com/m5c/XoxInternals) as a maven dependency.
 > Satisfy them by a preliminary build
-> of [```XoxInternals```](https://github.com/kartoffelquadrat/XoxInternals),
+> of [```XoxInternals```](https://github.com/m5c/XoxInternals),
 > with ```mvn clean install```, to inject the XoxInternals dependency into your local maven
 > repository.
 
