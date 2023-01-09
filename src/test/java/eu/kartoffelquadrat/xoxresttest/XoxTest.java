@@ -43,28 +43,30 @@ public class XoxTest
     // Add new game
     long id = addSampleGame();
 
-    // Verify the game exists
-    assert getAllRegisteredGameIds().contains(id);
+    // Verify the game exists, if and only if read verifications are requested
+    if (RestTestUtils.isReadVerficationsRequested()) {
+      assert getAllRegisteredGameIds().contains(id);
+    } else {
+      System.out.println("READ VERIFICATIONS SKIPPED TO REDUCE TEST CROSS DEPENDENCIES.");
+    }
   }
 
   /**
-   * Test access to ranking information of a test game TODO: test the default game, so we don't
-   * depend on working game creation for this test.
+   * Test access to ranking information of the default (static) sample game.
    */
   @Test
   public void testXoxIdGet() throws UnirestException, ModelAccessException {
 
-    // Add new game
-    long id = addSampleGame();
-
     // Get Ranking info and analyze
-    HttpResponse<String> rankingReply = Unirest.get(getServiceURL(Long.toString(id))).asString();
+    HttpResponse<String> rankingReply =
+        Unirest.get(getServiceURL(Long.toString(sampleGameId))).asString();
     verifyOk(rankingReply);
 
-    // Ranking can not be deserialized conveniently, due to final / real-only fields in ranking
+    // Deserialize response payload
     Ranking ranking = new Gson().fromJson(rankingReply.getBody(), Ranking.class);
 
-    // Verify ranking properties
+    // TODO: double check these asserts are correct for default sample game.
+    // Verify ranking properties (response content)
     Assert.assertFalse(
         "Access to test game marked game over while the sample game should be still running.",
         ranking.isGameOver());
@@ -77,27 +79,26 @@ public class XoxTest
   }
 
   /**
-   * Try to delete a sample game (game is added first, uniquely for this purpose)
+   * Try to delete the sample game
    *
    * @throws UnirestException
    */
   @Test
   public void testXoxIdDelete() throws UnirestException {
 
-    // Add new game
-    long id = addSampleGame();
-
-    // Verify game id exists
-    assert getAllRegisteredGameIds().contains(id);
-
-    // Delete game again
+    // Delete game
     HttpResponse<String> deleteGameReply =
-        Unirest.delete(getServiceURL(Long.toString(id))).asString();
+        Unirest.delete(getServiceURL(Long.toString(sampleGameId))).asString();
     verifyOk(deleteGameReply);
 
-    // Verify game is no longer there
-    Assert.assertFalse("Deleted test game, but the list of existing game still contains its ID.",
-        getAllRegisteredGameIds().contains(id));
+    // Verify the game exists, if and only if read verifications are requested
+    if (RestTestUtils.isReadVerficationsRequested()) {
+      // Verify game is no longer there
+      Assert.assertFalse("Deleted test game, but the list of existing game still contains its ID.",
+          getAllRegisteredGameIds().contains(sampleGameId));
+    } else {
+      System.out.println("READ VERIFICATIONS SKIPPED TO REDUCE TEST CROSS DEPENDENCIES.");
+    }
   }
 
   /**
@@ -108,18 +109,12 @@ public class XoxTest
   @Test
   public void testXoxIdBoardGet() throws UnirestException {
 
-
-    // Add new game
-//        long id = addSampleGame();
-
-    // Verify game id exists
-    assert getAllRegisteredGameIds().contains(sampleGameId);
-
     // Verify board layout (empty)
     HttpResponse<String> getBoardResponse =
         Unirest.get(getServiceURL(Long.toString(sampleGameId) + "/board")).asString();
     Board board = new Gson().fromJson(getBoardResponse.getBody(), Board.class);
 
+    // TODO: double check these asserts make sense for default game state of static sample game.
     // Verify board status (must be empty board)
     Assert.assertTrue("Sample board should be empty, but corresponding flag is false.",
         board.isEmpty());
@@ -136,23 +131,19 @@ public class XoxTest
   /**
    * Try to retrieve player info for sample xox game instance.
    *
-   * @throws UnirestException
+   * @throws UnirestException in case of communication error with xox backend.
    */
   @Test
   public void testXoxIdPlayersGet() throws UnirestException {
 
-    // Add new game
-//        long id = addSampleGame();
-
-    // Verify game id exists
-    assert getAllRegisteredGameIds().contains(sampleGameId);
-
     // Access players resource
     HttpResponse<String> getPlayersResponse =
-        Unirest.get(getServiceURL(Long.toString(sampleGameId) + "/players")).asString();
+        Unirest.get(getServiceURL(sampleGameId + "/players")).asString();
     verifyOk(getPlayersResponse);
     Player[] players = new Gson().fromJson(getPlayersResponse.getBody(), Player[].class);
 
+
+    // TODO: enasure these asserts make sense for default sample game.
     Assert.assertTrue("Not exactly two players in sample game.", players.length == 2);
     Assert.assertTrue("First player not Max", players[0].getName().equals("Max"));
     Assert.assertTrue("First player colour not #CAFFEE",
@@ -170,19 +161,14 @@ public class XoxTest
   @Test
   public void testXoxIdPlayersIdActionsGet() throws UnirestException {
 
-    // Add new game
-//        long id = addSampleGame();
-
-    // Verify game id exists
-    assert getAllRegisteredGameIds().contains(sampleGameId);
-
     // Access players resource, parse response to hash indexed map
     HttpResponse<String> getActionsResponsePlayer1 =
-        Unirest.get(getServiceURL(Long.toString(sampleGameId) + "/players/Max/actions")).asString();
+        Unirest.get(getServiceURL(sampleGameId + "/players/Max/actions")).asString();
     verifyOk(getActionsResponsePlayer1);
     XoxClaimFieldAction[] actionsPlayer1 = new Gson().fromJson(getActionsResponsePlayer1.getBody(),
         new XoxClaimFieldAction[] {}.getClass());
 
+    // TODO: Ensure these asserts make sense for sample game.
     // All 9 fields must be accessible, there should be 9 entries in hashmap
     Assert.assertTrue(
         "Retrieved actions bundle does not contain 9 entries, while the xox board is empty",
@@ -190,7 +176,7 @@ public class XoxTest
 
     // Do the same for player 2 (not their turn) resource, parse response to hash indexed map
     HttpResponse<String> getActionsResponsePlayer2 =
-        Unirest.get(getServiceURL(Long.toString(sampleGameId) + "/players/Moritz/actions"))
+        Unirest.get(getServiceURL(sampleGameId + "/players/Moritz/actions"))
             .asString();
     verifyOk(getActionsResponsePlayer2);
     XoxClaimFieldAction[] actionsPlayer2 = new Gson().fromJson(getActionsResponsePlayer2.getBody(),
@@ -210,40 +196,41 @@ public class XoxTest
   @Test
   public void testXoxIdPlayersIdActionsPost() throws UnirestException {
 
-    // Add new game
-    long id = addSampleGame();
-
-    // Verify game id exists
-    assert getAllRegisteredGameIds().contains(id);
-
     // Access players resource, parse response to hash indexed map
     HttpResponse<String> postActionResponse =
-        Unirest.post(getServiceURL(Long.toString(id) + "/players/Max/actions/0")).asString();
+        Unirest.post(getServiceURL(sampleGameId + "/players/Max/actions/0")).asString();
     verifyOk(postActionResponse);
 
-    // Access players resource, parse response to hash indexed map
-    HttpResponse<String> getActionsResponsePlayer2 =
-        Unirest.get(getServiceURL(Long.toString(id) + "/players/Moritz/actions")).asString();
-    verifyOk(getActionsResponsePlayer2);
-    XoxClaimFieldAction[] actionsPlayer2 = new Gson().fromJson(getActionsResponsePlayer2.getBody(),
-        new XoxClaimFieldAction[] {}.getClass());
+    // If validation of effectiveness requested, also verify resulting game state
+    if (RestTestUtils.isReadVerficationsRequested()) {
+      // Access players resource, parse response to hash indexed map
+      HttpResponse<String> getActionsResponsePlayer2 =
+          Unirest.get(getServiceURL(sampleGameId + "/players/Moritz/actions")).asString();
+      verifyOk(getActionsResponsePlayer2);
+      XoxClaimFieldAction[] actionsPlayer2 =
+          new Gson().fromJson(getActionsResponsePlayer2.getBody(),
+              new XoxClaimFieldAction[] {}.getClass());
 
-    // Remaining 8 fields must be accessible, there should be 9 entries in hashmap
-    Assert.assertTrue(
-        "Retrieved actions bundle does not contain 9 entries, while the xox board is empty",
-        actionsPlayer2.length == 8);
+      // Remaining 8 fields must be accessible, there should be 9 entries in hashmap
+      Assert.assertTrue(
+          "Retrieved actions bundle does not contain 9 entries, while the xox board is empty",
+          actionsPlayer2.length == 8);
 
-    // Do the same for player 1 (not their turn) resource, parse response to hash indexed map
-    HttpResponse<String> getActionsResponsePlayer1 =
-        Unirest.get(getServiceURL(Long.toString(id) + "/players/Max/actions")).asString();
-    verifyOk(getActionsResponsePlayer1);
-    XoxClaimFieldAction[] actionsPlayer1 = new Gson().fromJson(getActionsResponsePlayer1.getBody(),
-        new XoxClaimFieldAction[] {}.getClass());
+      // Do the same for player 1 (not their turn) resource, parse response to hash indexed map
+      HttpResponse<String> getActionsResponsePlayer1 =
+          Unirest.get(getServiceURL(sampleGameId + "/players/Max/actions")).asString();
+      verifyOk(getActionsResponsePlayer1);
+      XoxClaimFieldAction[] actionsPlayer1 =
+          new Gson().fromJson(getActionsResponsePlayer1.getBody(),
+              new XoxClaimFieldAction[] {}.getClass());
 
-    // action map for player 2 must be empty (not their turn)
-    Assert.assertTrue(
-        "Retrieved actions bundle does not contain 0 entries, while it is not player 1s turn.",
-        actionsPlayer1.length == 0);
+      // action map for player 2 must be empty (not their turn)
+      Assert.assertTrue(
+          "Retrieved actions bundle does not contain 0 entries, while it is not player 1s turn.",
+          actionsPlayer1.length == 0);
+    } else {
+      System.out.println("READ VERIFICATIONS SKIPPED TO REDUCE TEST CROSS DEPENDENCIES.");
+    }
   }
 
   /**
