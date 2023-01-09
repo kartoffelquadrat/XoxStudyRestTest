@@ -42,7 +42,6 @@ specification.
     * Are followed by a subsequent *Get* request to verify the state change was correctly applied.
 * Queries containing a body payload (*Put* / *Post*) specify the body encoding with a header
   field: ```Content-Type: application/json```.
-* An initial test version, written in BASH [is archived here](xox-units).
 
 ## Testing
 
