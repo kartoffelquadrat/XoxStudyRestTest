@@ -26,21 +26,21 @@ function restartBackend {
 echo "All tests, without R verification"
 
 restartBackend
-mvn -Dtest=XoxTest#testXoxGet test -Dreadverif=true
+mvn -Dtest=XoxTest#testXoxGet test
 restartBackend
-mvn -Dtest=XoxTest#testXoxPost test -Dreadverif=true
+mvn -Dtest=XoxTest#testXoxPost test
 restartBackend
-mvn -Dtest=XoxTest#testXoxIdGet test -Dreadverif=true
+mvn -Dtest=XoxTest#testXoxIdGet test
 restartBackend
-mvn -Dtest=XoxTest#testXoxIdDelete test -Dreadverif=true
+mvn -Dtest=XoxTest#testXoxIdDelete test
 restartBackend
-mvn -Dtest=XoxTest#testXoxIdBoardGet test -Dreadverif=true
+mvn -Dtest=XoxTest#testXoxIdBoardGet test
 restartBackend
-mvn -Dtest=XoxTest#testXoxIdPlayersGet test -Dreadverif=true
+mvn -Dtest=XoxTest#testXoxIdPlayersGet test
 restartBackend
-mvn -Dtest=XoxTest#testXoxIdPlayersIdActionsGet test -Dreadverif=true
+mvn -Dtest=XoxTest#testXoxIdPlayersIdActionsGet
 restartBackend
-mvn -Dtest=XoxTest#testXoxIdPlayersIdActionsPost test -Dreadverif=true
+mvn -Dtest=XoxTest#testXoxIdPlayersIdActionsPost
 restartBackend
 
 echo "Tests of CUD with R verification"
@@ -60,5 +60,5 @@ restartBackend
 mvn -Dtest=XoxTest#testXoxIdPlayersIdActionsGet test -Dreadverif=true
 restartBackend
 mvn -Dtest=XoxTest#testXoxIdPlayersIdActionsPost test -Dreadverif=true
-restartBackend
+killApp8080
 
