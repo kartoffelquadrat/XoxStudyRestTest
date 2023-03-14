@@ -194,7 +194,7 @@ public class XoxTest
    * @throws UnirestException
    */
   @Test
-  public void testXoxIdPlayersIdActionsPost() throws UnirestException {
+  public void testXoxIdPlayersIdActionsActionPost() throws UnirestException {
 
     // Access players resource, parse response to hash indexed map
     HttpResponse<String> postActionResponse =

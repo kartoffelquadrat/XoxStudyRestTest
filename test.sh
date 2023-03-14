@@ -38,13 +38,13 @@ mvn -Dtest=XoxTest#testXoxIdBoardGet test
 restartBackend
 mvn -Dtest=XoxTest#testXoxIdPlayersGet test
 restartBackend
-mvn -Dtest=XoxTest#testXoxIdPlayersIdActionsGet
+mvn -Dtest=XoxTest#testXoxIdPlayersIdActionsGet test
 restartBackend
-mvn -Dtest=XoxTest#testXoxIdPlayersIdActionsPost
-restartBackend
+mvn -Dtest=XoxTest#testXoxIdPlayersIdActionsActionPost test
+
 
 echo "Tests of CUD with R verification"
-
+restartBackend
 mvn -Dtest=XoxTest#testXoxGet test -Dreadverif=true
 restartBackend
 mvn -Dtest=XoxTest#testXoxPost test -Dreadverif=true
@@ -52,13 +52,13 @@ restartBackend
 mvn -Dtest=XoxTest#testXoxIdGet test -Dreadverif=true
 restartBackend
 mvn -Dtest=XoxTest#testXoxIdDelete test -Dreadverif=true
-restartBackend
+restartBackendls
 mvn -Dtest=XoxTest#testXoxIdBoardGet test -Dreadverif=true
 restartBackend
 mvn -Dtest=XoxTest#testXoxIdPlayersGet test -Dreadverif=true
 restartBackend
 mvn -Dtest=XoxTest#testXoxIdPlayersIdActionsGet test -Dreadverif=true
 restartBackend
-mvn -Dtest=XoxTest#testXoxIdPlayersIdActionsPost test -Dreadverif=true
+mvn -Dtest=XoxTest#testXoxIdPlayersIdActionsActionPost test -Dreadverif=true
 killApp8080
 
