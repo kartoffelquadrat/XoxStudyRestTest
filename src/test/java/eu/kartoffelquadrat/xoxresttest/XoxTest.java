@@ -112,6 +112,7 @@ public class XoxTest
     // Verify board layout (empty)
     HttpResponse<String> getBoardResponse =
         Unirest.get(getServiceURL(Long.toString(sampleGameId) + "/board")).asString();
+    verifyOk(getBoardResponse);
     Board board = new Gson().fromJson(getBoardResponse.getBody(), Board.class);
 
     // TODO: double check these asserts make sense for default game state of static sample game.
