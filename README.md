@@ -56,6 +56,10 @@ using [a reference implementation Xox backend](https://github.com/m5c/XoxStudyMa
       Delete calls) and without.
 * Verify that all tests pass.
 
+## License
+
+This software is under open source [MIT License](LICENSE.txt).
+
 ## Contact / Pull Requests
 
 * Author: Maximilian Schiedermeier ![email](markdown/email.png)
